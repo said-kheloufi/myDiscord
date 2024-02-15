@@ -5,32 +5,32 @@ import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import messagebox
 
-HOST = '127.0.0.1'
-PORT = 1234
-
-DARK_GREY = '#121212'
-MEDIUM_GREY = '#1F1B24'
-OCEAN_BLUE = '#464EB8'
-WHITE = "white"
-FONT = ("Helvetica", 17)
-BUTTON_FONT = ("Helvetica", 15)
-SMALL_FONT = ("Helvetica", 13)
+# Define constants
+HOST = '127.0.0.1'  # The server's hostname or IP address
+PORT = 1234  # The port used by the server
+DARK_GREY = '#121212'  # Dark grey color for the GUI
+MEDIUM_GREY = '#1F1B24'  # Medium grey color for the GUI
+OCEAN_BLUE = '#464EB8'  # Ocean blue color for the GUI
+WHITE = "white"  # White color for the GUI
+FONT = ("Helvetica", 17)  # Font for the GUI
+BUTTON_FONT = ("Helvetica", 15)  # Font for the buttons in the GUI
+SMALL_FONT = ("Helvetica", 13)  # Small font for the GUI
 
 # Creating a socket object
 # AF_INET: we are going to use IPv4 addresses
 # SOCK_STREAM: we are using TCP packets for communication
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+# Function to add a message to the message box
 def add_message(message):
     message_box.config(state=tk.NORMAL)
     message_box.insert(tk.END, message + '\n')
     message_box.config(state=tk.DISABLED)
 
+# Function to connect to the server
 def connect():
-
     # try except block
     try:
-
         # Connect to the server
         client.connect((HOST, PORT))
         print("Successfully connected to server")
@@ -49,6 +49,7 @@ def connect():
     username_textbox.config(state=tk.DISABLED)
     username_button.config(state=tk.DISABLED)
 
+# Function to send a message to the server
 def send_message():
     message = message_textbox.get()
     if message != '':
@@ -57,6 +58,7 @@ def send_message():
     else:
         messagebox.showerror("Empty message", "Message cannot be empty")
 
+# Create the GUI
 root = tk.Tk()
 root.geometry("600x600")
 root.title("Messenger Client")
@@ -94,25 +96,20 @@ message_box = scrolledtext.ScrolledText(middle_frame, font=SMALL_FONT, bg=MEDIUM
 message_box.config(state=tk.DISABLED)
 message_box.pack(side=tk.TOP)
 
-
+# Function to listen for messages from the server
 def listen_for_messages_from_server(client):
-
     while 1:
-
         message = client.recv(2048).decode('utf-8')
         if message != '':
             username = message.split("~")[0]
             content = message.split('~')[1]
-
             add_message(f"[{username}] {content}")
-            
         else:
             messagebox.showerror("Error", "Message recevied from client is empty")
 
 # main function
 def main():
-
     root.mainloop()
-    
+
 if __name__ == '__main__':
     main()
